@@ -31,6 +31,7 @@ public final class Main {
         List<String[]> exhibits = read(dataDir, "exhibits.csv");
         List<String[]> stands = read(dataDir, "stands.csv");
         List<String[]> placements = read(dataDir, "placements.csv");
+        List<String[]> versions = read(dataDir, "versions.csv");
         List<String[]> manifestRows =
                 read(dataDir, "manifest_" + standId + ".csv");
         List<String[]> events = read(dataDir, "events.csv");
@@ -47,8 +48,8 @@ public final class Main {
         System.out.println();
         System.out.println("=== Алгоритм 1. Синхронизация контента стенда "
                 + standId + " ===");
-        Map<Integer, Integer> plan =
-                ContentSync.buildServerPlan(standId, placements, exhibits);
+        Map<Integer, Integer> plan = ContentSync.buildServerPlan(
+                standId, placements, versions, now);
         Map<Integer, Integer> manifest =
                 ContentSync.readManifest(manifestRows);
         System.out.println("План на сервере (экспонат=версия): "
@@ -67,14 +68,20 @@ public final class Main {
         System.out.println(
                 "=== Алгоритм 2. Регистрация событий взаимодействия ===");
         Set<String> standIds = EventRegistration.buildStandIds(stands);
-        Set<String> placementKeys =
-                EventRegistration.buildPlacementKeys(placements);
+        Map<String, String> versionNo = new HashMap<>();
+        for (String[] v : versions) {
+            versionNo.put(v[Periods.V_ID], v[Periods.V_NO]);
+        }
         List<String> rejected = new ArrayList<>();
         List<String[]> accepted = EventRegistration.registerAll(
-                events, standIds, placementKeys, now, rejected);
+                events, standIds, placements, versions, now, rejected);
         System.out.println("Получено событий: " + events.size()
                 + ", принято: " + accepted.size()
                 + ", отклонено: " + rejected.size());
+        for (String[] e : accepted) {
+            System.out.println("  принято " + e[0] + " — размещение " + e[6]
+                    + ", версия " + e[7] + " (№" + versionNo.get(e[7]) + ")");
+        }
         for (String line : rejected) {
             System.out.println("  отклонено " + line);
         }
@@ -96,8 +103,9 @@ public final class Main {
                     values[StatisticsAggregation.TOTAL_SEC],
                     StatisticsAggregation.average(values));
         }
-        Set<Integer> exposition =
-                StatisticsAggregation.exhibitsOnExposition(placements, exhibits);
+        Set<Integer> exposition = StatisticsAggregation
+                .exhibitsOnExposition(placements, versions, now);
+        System.out.println("Экспозиция на момент проверки: " + exposition);
         printIds("Невостребованные экспонаты",
                 StatisticsAggregation.unrequested(exposition, stats), titles);
     }

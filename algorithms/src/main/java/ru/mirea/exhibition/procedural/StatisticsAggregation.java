@@ -1,8 +1,8 @@
 package ru.mirea.exhibition.procedural;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,19 +71,23 @@ public final class StatisticsAggregation {
         return ids;
     }
 
-    /** Экспонаты экспозиции: опубликованные и размещённые на стендах. */
+    /**
+     * Экспонаты экспозиции на момент now: размещённые на стенде
+     * и имеющие опубликованную версию в этот момент.
+     */
     public static Set<Integer> exhibitsOnExposition(
-            List<String[]> placements, List<String[]> exhibits) {
-        Set<Integer> published = new HashSet<>();
-        for (String[] exhibit : exhibits) {
-            if (Boolean.parseBoolean(exhibit[4])) {
-                published.add(Integer.parseInt(exhibit[0]));
-            }
-        }
+            List<String[]> placements, List<String[]> versions,
+            LocalDateTime now) {
+        Map<Integer, List<String[]>> published =
+                Periods.publicationHistory(versions);
         Set<Integer> result = new TreeSet<>();
-        for (String[] placement : placements) {
-            int exhibitId = Integer.parseInt(placement[1]);
-            if (published.contains(exhibitId)) {
+        for (String[] p : placements) {
+            if (!Periods.isActive(p, Periods.PL_FROM, Periods.PL_TO, now)) {
+                continue;
+            }
+            int exhibitId = Integer.parseInt(p[Periods.PL_EXHIBIT]);
+            if (Periods.activeAt(published.get(exhibitId), Periods.V_FROM,
+                    Periods.V_TO, now) != null) {
                 result.add(exhibitId);
             }
         }

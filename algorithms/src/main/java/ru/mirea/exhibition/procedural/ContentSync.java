@@ -1,5 +1,6 @@
 package ru.mirea.exhibition.procedural;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,32 +25,31 @@ public final class ContentSync {
     }
 
     /**
-     * Строит план стенда: id экспоната → опубликованная версия.
+     * Строит план стенда на момент now: id экспоната → номер версии,
+     * опубликованной в этот момент. Учитываются только размещения,
+     * действующие в момент now; черновики и снятые с публикации
+     * экспонаты в план не входят.
      *
-     * @param standId    идентификатор стенда
-     * @param placements размещения:
-     *                   stand_id;exhibit_id;display_order;version_on_stand
-     * @param exhibits   экспонаты: id;exhibition_id;title;version;published
+     * @param placements размещения (формат см. {@link Periods})
+     * @param versions   версии публикации (формат см. {@link Periods})
      */
     public static Map<Integer, Integer> buildServerPlan(
             String standId, List<String[]> placements,
-            List<String[]> exhibits) {
-        Map<Integer, Integer> published = new HashMap<>();
-        for (String[] exhibit : exhibits) {
-            if (Boolean.parseBoolean(exhibit[4])) {
-                published.put(Integer.parseInt(exhibit[0]),
-                        Integer.parseInt(exhibit[3]));
-            }
-        }
+            List<String[]> versions, LocalDateTime now) {
+        Map<Integer, List<String[]>> published =
+                Periods.publicationHistory(versions);
         Map<Integer, Integer> plan = new HashMap<>();
-        for (String[] placement : placements) {
-            if (!placement[0].equals(standId)) {
+        for (String[] p : placements) {
+            if (!p[Periods.PL_STAND].equals(standId)
+                    || !Periods.isActive(p, Periods.PL_FROM,
+                    Periods.PL_TO, now)) {
                 continue;
             }
-            int exhibitId = Integer.parseInt(placement[1]);
-            Integer version = published.get(exhibitId);
-            if (version != null) {      // черновики на стенд не выдаются
-                plan.put(exhibitId, version);
+            int exhibitId = Integer.parseInt(p[Periods.PL_EXHIBIT]);
+            String[] v = Periods.activeAt(published.get(exhibitId),
+                    Periods.V_FROM, Periods.V_TO, now);
+            if (v != null) {
+                plan.put(exhibitId, Integer.parseInt(v[Periods.V_NO]));
             }
         }
         return plan;

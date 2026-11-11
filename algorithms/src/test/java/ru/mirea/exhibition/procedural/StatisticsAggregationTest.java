@@ -3,6 +3,7 @@ package ru.mirea.exhibition.procedural;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,22 +51,35 @@ class StatisticsAggregationTest {
     }
 
     @Test
-    @DisplayName("В экспозицию входят только опубликованные размещённые экспонаты")
-    void expositionAndUnrequested() {
-        List<String[]> exhibits = List.of(
-                new String[]{"1", "1", "A", "1", "true"},
-                new String[]{"3", "1", "C", "1", "true"},
-                new String[]{"6", "1", "Черновик", "1", "false"},
-                new String[]{"9", "1", "Не размещён", "1", "true"});
+    @DisplayName("Экспозиция на момент: размещён и опубликован именно тогда")
+    void expositionAtMomentAndUnrequested() {
+        List<String[]> versions = List.of(
+                new String[]{"101", "1", "1", "2026-10-15T09:00:00", ""},
+                new String[]{"103", "3", "1", "2026-10-15T09:00:00", ""},
+                new String[]{"106", "6", "1", "", ""},
+                new String[]{"107", "7", "1", "2026-10-15T09:00:00",
+                        "2026-10-23T12:00:00"},
+                new String[]{"109", "9", "1", "2026-10-24T09:00:00", ""});
         List<String[]> placements = List.of(
-                new String[]{"ST-01", "1", "1", "1"},
-                new String[]{"ST-01", "6", "2", "0"},
-                new String[]{"ST-03", "3", "1", "1"});
+                new String[]{"1", "ST-01", "1", "1", "2026-10-15T09:00:00", ""},
+                new String[]{"2", "ST-01", "6", "2", "2026-10-15T09:00:00", ""},
+                new String[]{"3", "ST-01", "7", "3", "2026-10-15T09:00:00", ""},
+                new String[]{"4", "ST-02", "3", "1", "2026-10-15T09:00:00",
+                        "2026-10-21T18:00:00"},
+                new String[]{"5", "ST-03", "9", "1", "2026-10-22T09:00:00", ""});
 
-        Set<Integer> exposition = StatisticsAggregation.exhibitsOnExposition(placements, exhibits);
-        assertEquals(Set.of(1, 3), exposition);
+        Set<Integer> early = StatisticsAggregation.exhibitsOnExposition(
+                placements, versions,
+                LocalDateTime.parse("2026-10-20T12:00:00"));
+        assertEquals(Set.of(1, 3, 7), early);
 
-        Map<Integer, int[]> stats = StatisticsAggregation.aggregate(List.<String[]>of(event("1", 30)));
-        assertEquals(List.of(3), StatisticsAggregation.unrequested(exposition, stats));
+        Set<Integer> late = StatisticsAggregation.exhibitsOnExposition(
+                placements, versions,
+                LocalDateTime.parse("2026-10-27T18:00:00"));
+        assertEquals(Set.of(1, 9), late);
+
+        Map<Integer, int[]> stats =
+                StatisticsAggregation.aggregate(List.<String[]>of(event("1", 30)));
+        assertEquals(List.of(9), StatisticsAggregation.unrequested(late, stats));
     }
 }
