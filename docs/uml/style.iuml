@@ -1,0 +1,22 @@
+skinparam defaultFontName "DejaVu Sans Condensed"
+skinparam dpi 200
+skinparam defaultFontSize 13
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam roundCorner 4
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor #F7F9FC
+  BorderColor #3B4A63
+  ArrowColor #3B4A63
+  StereotypeFontSize 11
+}
+skinparam package {
+  BorderColor #8A97AD
+  FontColor #3B4A63
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B8A86A
+}
+hide empty members

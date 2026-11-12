@@ -1,0 +1,57 @@
+@startuml sequence_registration
+' Рисунок 3.4 — Регистрация пакета событий
+!include style.iuml
+skinparam sequence {
+  ParticipantBackgroundColor #F7F9FC
+  ParticipantBorderColor #3B4A63
+  LifeLineBorderColor #8A97AD
+  ArrowColor #3B4A63
+  GroupBorderColor #8A97AD
+}
+skinparam maxMessageSize 220
+hide footbox
+participant ":EventRegistration-\nService" as S
+participant "IncomingEvent" as IE
+participant "c :\nEventCandidate" as C
+participant "rule :\nEventRule" as R
+participant ":HistoryIndex" as HI
+participant ":History" as H
+participant ":EventStore" as ST
+
+[-> S : register(records)
+activate S
+loop для каждой записи пакета
+  S -> IE : parse(fields)
+  alt формат нарушен
+    IE --> S : пусто
+    S -> S : отклонить: BAD_FORMAT
+  else запись разобрана
+    IE --> S : event
+    create C
+    S -> C : new EventCandidate(event)
+    loop для каждого правила, пока нет нарушения
+      S -> R : check(c)
+      activate R
+      opt правило истории (PlacementActiveRule, PublicationActiveRule)
+        R -> HI : activeAt(keyOf(event), event.start)
+        HI -> H : activeAt(t)
+        note right of H : двоичный поиск\nпо началу периода
+        H --> HI : запись или пусто
+        HI --> R : запись или пусто
+        R -> C : bindPlacement(p) / bindVersion(v)
+      end
+      R --> S : пусто или причина
+      deactivate R
+    end
+    alt найдено нарушение
+      S -> S : отклонить с причиной
+    else все правила выполнены
+      S -> C : toRegistered()
+      C --> S : registered
+      S -> ST : save(registered)
+    end
+  end
+end
+[<-- S : RegistrationResult
+deactivate S
+@enduml

@@ -1,0 +1,6 @@
+EventCandidate --> "0..1" Placement
+EventCandidate --> "0..1" PublicationVersion
+RegisteredEvent --> "1" Placement
+RegisteredEvent --> "1" PublicationVersion
+RegisteredEvent --> "1" EventType
+RejectedEvent --> "1" RejectionReason

@@ -1,0 +1,12 @@
+@startuml class_rules
+' Рисунок 3.4 — Правила проверки событий
+!include style.iuml
+left to right direction
+!include defs_rules.iuml
+class "HistoryIndex<K, T>" as HistoryIndex #E9EDF3
+class ExhibitionCatalog #E9EDF3
+interface EventStore #E9EDF3
+enum EventType #E9EDF3
+!include rel_rules.iuml
+!include rel_rules_ext.iuml
+@enduml

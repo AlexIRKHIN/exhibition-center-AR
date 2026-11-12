@@ -1,0 +1,7 @@
+@startuml class_registration
+' Рисунок 3.5 — Служба регистрации событий и результаты регистрации
+!include style.iuml
+!include defs_regservice.iuml
+interface EventRule #E9EDF3
+!include rel_regservice.iuml
+@enduml

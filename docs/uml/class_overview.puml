@@ -1,0 +1,24 @@
+@startuml class_overview
+' Рисунок Г.1 — Общая диаграмма классов модуля exhibition-core
+!include style.iuml
+hide members
+hide <<record>> stereotype
+hide <<utility>> stereotype
+!include defs_domain.iuml
+!include defs_history.iuml
+!include defs_catalog.iuml
+!include defs_data.iuml
+!include defs_rules.iuml
+!include defs_regservice.iuml
+!include defs_services.iuml
+!include rel_domain.iuml
+!include rel_history.iuml
+!include rel_catalog.iuml
+!include rel_rules.iuml
+!include rel_rules_ext.iuml
+!include rel_regservice.iuml
+!include rel_regservice_ext.iuml
+!include rel_services.iuml
+!include rel_services_ext.iuml
+EventRegistrationService ..> ExhibitionCatalog : standard()
+@enduml

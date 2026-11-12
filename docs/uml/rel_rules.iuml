@@ -1,0 +1,10 @@
+EventRule <|.. KnownStandRule
+EventRule <|.. EventTypeRule
+EventRule <|.. NotInFutureRule
+EventRule <|.. DurationRule
+EventRule <|.. HistoryRule
+EventRule <|.. ExhibitionOpenRule
+EventRule <|.. UniqueIdRule
+HistoryRule <|-- PlacementActiveRule
+HistoryRule <|-- PublicationActiveRule
+EventRule ..> RejectionReason

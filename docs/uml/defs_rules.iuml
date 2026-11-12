@@ -1,0 +1,42 @@
+package "registration" {
+  interface EventRule {
+    + check(c) : Optional<RejectionReason>
+  }
+  abstract class "HistoryRule<K, T extends Periodic>" as HistoryRule {
+    - history : HistoryIndex<K, T>
+    - reason : RejectionReason
+    + {final} check(c) : Optional<RejectionReason>
+    # {abstract} keyOf(event) : K
+    # {abstract} remember(c, found)
+  }
+  class KnownStandRule {
+    - catalog : ExhibitionCatalog
+  }
+  class EventTypeRule
+  class NotInFutureRule {
+    - clock : Clock
+  }
+  class DurationRule {
+    - minSec : int
+    - maxSec : int
+  }
+  class PlacementActiveRule
+  class PublicationActiveRule
+  class ExhibitionOpenRule {
+    - catalog : ExhibitionCatalog
+  }
+  class UniqueIdRule {
+    - store : EventStore
+  }
+  enum RejectionReason {
+    BAD_FORMAT
+    UNKNOWN_STAND
+    BAD_TYPE
+    FUTURE_TIME
+    BAD_DURATION
+    NOT_PLACED
+    NOT_PUBLISHED
+    EXHIBITION_CLOSED
+    DUPLICATE
+  }
+}

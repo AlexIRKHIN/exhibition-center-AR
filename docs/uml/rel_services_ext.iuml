@@ -1,0 +1,10 @@
+ContentSyncService --> "1" ExhibitionCatalog
+StatisticsService --> "1" ExhibitionCatalog
+StatisticsService ..> RegisteredEvent
+Main ..> ExhibitionCatalog
+Main ..> CsvExhibitionRepository
+Main ..> CsvStandInbox
+Main ..> ContentSyncService
+Main ..> EventRegistrationService
+Main ..> InMemoryEventStore
+Main ..> StatisticsService

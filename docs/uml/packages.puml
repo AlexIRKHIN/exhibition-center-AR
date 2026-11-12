@@ -1,0 +1,40 @@
+@startuml packages
+' Рисунок 3.1 — Пакеты модуля exhibition-core и зависимости между ними
+!include style.iuml
+skinparam packageStyle folder
+skinparam defaultTextAlignment center
+package "app\nзапуск демонстрации" as app {
+}
+package "sync\nалгоритм 1: синхронизация стенда" as sync {
+}
+package "registration\nалгоритм 2: регистрация событий" as registration {
+}
+package "stats\nалгоритм 3: статистика" as stats {
+}
+package "catalog\nкаталог экспозиции" as catalog {
+}
+package "data\nчтение данных (CSV)" as data {
+}
+package "history\nистории периодов" as history {
+}
+package "domain\nпредметная область" as domain {
+}
+app ..> catalog
+app ..> data
+app ..> registration
+app ..> stats
+app ..> sync
+catalog ..> data
+catalog ..> domain
+catalog ..> history
+data ..> domain
+data ..> sync
+history ..> domain
+registration ..> catalog
+registration ..> domain
+registration ..> history
+stats ..> catalog
+stats ..> registration
+sync ..> catalog
+sync ..> domain
+@enduml

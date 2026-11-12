@@ -1,0 +1,12 @@
+ExhibitionCatalog *-- "2" HistoryIndex
+ExhibitionCatalog o-- "*" Exhibition
+ExhibitionCatalog o-- "*" Exhibit
+ExhibitionCatalog o-- "*" Stand
+ExhibitionCatalog o-- "*" Placement
+ExhibitionCatalog ..> ExhibitionRepository : загружается из
+CsvExhibitionRepository ..|> ExhibitionRepository
+CsvExhibitionRepository ..> CsvFile
+CsvStandInbox ..> CsvFile
+CsvStandInbox ..> StandContent
+CsvFile ..> CsvRow
+CsvRow ..> DataLoadException

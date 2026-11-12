@@ -1,0 +1,12 @@
+EventRegistrationService o-- "1..*" EventRule : по порядку
+EventRegistrationService --> "1" EventStore
+EventRegistrationService ..> IncomingEvent : parse()
+EventRegistrationService ..> EventCandidate
+EventRegistrationService ..> RegistrationResult
+EventCandidate --> "1" IncomingEvent
+EventCandidate ..> RegisteredEvent : toRegistered()
+RegisteredEvent --> "1" IncomingEvent
+RegistrationResult o-- "*" RegisteredEvent
+RegistrationResult o-- "*" RejectedEvent
+EventStore <|.. InMemoryEventStore
+InMemoryEventStore o-- "*" RegisteredEvent

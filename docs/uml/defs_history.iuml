@@ -1,0 +1,16 @@
+package "history" {
+  class "History<T extends Periodic>" as History {
+    - records : List<T>
+    + History(records)
+    + activeAt(t) : Optional<T>
+    + records() : List<T>
+    + size() : int
+  }
+  class "HistoryIndex<K, T extends Periodic>" as HistoryIndex {
+    - histories : Map<K, History<T>>
+    + HistoryIndex(records, keyOf)
+    + activeAt(key, t) : Optional<T>
+    + historyOf(key) : History<T>
+    + keys() : Set<K>
+  }
+}

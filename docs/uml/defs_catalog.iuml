@@ -1,0 +1,20 @@
+package "catalog" {
+  class ExhibitionCatalog {
+    - exhibitions : Map<Integer, Exhibition>
+    - exhibits : Map<Integer, Exhibit>
+    - stands : Map<String, Stand>
+    - placements : List<Placement>
+    - placementHistory : HistoryIndex
+    - publicationHistory : HistoryIndex
+    + ExhibitionCatalog(repository)
+    + hasStand(standId) : boolean
+    + exhibit(exhibitId) : Optional<Exhibit>
+    + titleOf(exhibitId) : String
+    + exhibitionOf(exhibitId) : Optional<Exhibition>
+    + placementHistory() : HistoryIndex
+    + publicationHistory() : HistoryIndex
+    + publishedVersionAt(exhibitId, t) : Optional<PublicationVersion>
+    + placementsOnStandAt(standId, t) : List<Placement>
+    + expositionAt(t) : Set<Integer>
+  }
+}

@@ -1,0 +1,8 @@
+@startuml class_domain
+' Рисунок 3.2 — Классы предметной области и истории периодов
+!include style.iuml
+!include defs_domain.iuml
+!include defs_history.iuml
+!include rel_domain.iuml
+!include rel_history.iuml
+@enduml

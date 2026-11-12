@@ -1,0 +1,56 @@
+package "domain" {
+  class Period <<record>> {
+    from : LocalDateTime
+    to : LocalDateTime [0..1]
+    + {static} openFrom(from) : Period
+    + isOpen() : boolean
+    + contains(t) : boolean
+    + overlaps(other) : boolean
+  }
+  interface Periodic {
+    + period() : Period
+  }
+  class Placement <<record>> {
+    id : int
+    standId : String
+    exhibitId : int
+    displayOrder : int
+    period : Period
+    + key() : Placement.Key
+  }
+  class "Placement.Key" as PlacementKey <<record>> {
+    standId : String
+    exhibitId : int
+  }
+  class PublicationVersion <<record>> {
+    id : int
+    exhibitId : int
+    number : int
+    period : Period [0..1]
+    + isDraft() : boolean
+  }
+  class Exhibition <<record>> {
+    id : int
+    title : String
+    opens : LocalDate
+    closes : LocalDate
+    + isOpenAt(t) : boolean
+  }
+  class Exhibit <<record>> {
+    id : int
+    exhibitionId : int
+    title : String
+  }
+  class Stand <<record>> {
+    id : String
+    name : String
+    hall : String
+    type : String
+  }
+  enum EventType {
+    OPEN
+    MODEL_3D
+    VIDEO
+    + {static} fromCode(code) : Optional<EventType>
+  }
+}

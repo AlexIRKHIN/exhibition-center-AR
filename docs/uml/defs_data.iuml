@@ -1,0 +1,32 @@
+package "data" {
+  interface ExhibitionRepository {
+    + exhibitions() : List<Exhibition>
+    + exhibits() : List<Exhibit>
+    + stands() : List<Stand>
+    + versions() : List<PublicationVersion>
+    + placements() : List<Placement>
+  }
+  class CsvExhibitionRepository {
+    - directory : Path
+  }
+  class CsvStandInbox {
+    - directory : Path
+    + manifest(standId) : StandContent
+    + eventPackage() : List<String[]>
+  }
+  class CsvFile <<utility>> {
+    + {static} rows(file) : List<CsvRow>
+    + {static} read(file, mapper) : List<T>
+  }
+  class CsvRow {
+    - file : Path
+    - line : int
+    - fields : String[]
+    + text(i) : String
+    + integer(i) : int
+    + date(i) : LocalDate
+    + dateTimeOrNull(i) : LocalDateTime
+    + error(message) : DataLoadException
+  }
+  class DataLoadException
+}

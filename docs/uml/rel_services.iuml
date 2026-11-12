@@ -1,0 +1,5 @@
+ContentSyncService ..> StandContent
+ContentSyncService ..> SyncPlan
+StatisticsService ..> StatisticsReport
+StatisticsReport o-- "*" ExhibitStats
+StatisticsService ..> ExhibitStats

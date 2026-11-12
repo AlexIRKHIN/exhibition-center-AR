@@ -1,0 +1,48 @@
+package "sync" {
+  class ContentSyncService {
+    - catalog : ExhibitionCatalog
+    + planFor(standId, now) : StandContent
+    + synchronize(server, stand) : SyncPlan
+  }
+  class StandContent {
+    - versions : Map<Integer, Integer>
+    + versionOf(exhibitId) : Optional<Integer>
+    + contains(exhibitId) : boolean
+    + exhibitIds() : Set<Integer>
+    + size() : int
+  }
+  class SyncPlan <<record>> {
+    toAdd : List<Integer>
+    toUpdate : List<Integer>
+    toDelete : List<Integer>
+    unchanged : int
+    + isUpToDate() : boolean
+  }
+}
+package "stats" {
+  class StatisticsService {
+    + {static} BY_POPULARITY : Comparator
+    - catalog : ExhibitionCatalog
+    + aggregate(events) : List<ExhibitStats>
+    + report(events, now) : StatisticsReport
+  }
+  class ExhibitStats {
+    - exhibitId : int
+    - count : int
+    - totalSec : int
+    ~ add(durationSec)
+    + count() : int
+    + totalSec() : int
+    + averageSec() : double
+  }
+  class StatisticsReport <<record>> {
+    ranking : List<ExhibitStats>
+    exposition : Set<Integer>
+    unrequested : List<Integer>
+  }
+}
+package "app" {
+  class Main {
+    + {static} main(args)
+  }
+}

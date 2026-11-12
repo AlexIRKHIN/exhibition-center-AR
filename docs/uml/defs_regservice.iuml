@@ -1,0 +1,51 @@
+package "registration" {
+  class EventRegistrationService {
+    - rules : List<EventRule>
+    - store : EventStore
+    + EventRegistrationService(rules, store)
+    + {static} standard(catalog, store, clock) : EventRegistrationService
+    + register(eventPackage) : RegistrationResult
+    - firstViolation(c) : Optional<RejectionReason>
+  }
+  class IncomingEvent <<record>> {
+    id : String
+    standId : String
+    exhibitId : int
+    typeCode : String
+    start : LocalDateTime
+    durationSec : int
+    + {static} parse(fields) : Optional<IncomingEvent>
+  }
+  class EventCandidate {
+    - event : IncomingEvent
+    - placement : Placement
+    - version : PublicationVersion
+    + event() : IncomingEvent
+    ~ bindPlacement(p)
+    ~ bindVersion(v)
+    ~ toRegistered() : RegisteredEvent
+  }
+  class RegisteredEvent <<record>> {
+    event : IncomingEvent
+    type : EventType
+    placement : Placement
+    version : PublicationVersion
+  }
+  class RejectedEvent <<record>> {
+    eventId : String
+    reason : RejectionReason
+  }
+  class RegistrationResult <<record>> {
+    accepted : List<RegisteredEvent>
+    rejected : List<RejectedEvent>
+    + received() : int
+  }
+  interface EventStore {
+    + contains(eventId) : boolean
+    + save(event)
+    + findAll() : List<RegisteredEvent>
+  }
+  class InMemoryEventStore {
+    - events : Map<String, RegisteredEvent>
+  }
+}

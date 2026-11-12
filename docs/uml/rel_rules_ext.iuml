@@ -1,0 +1,5 @@
+HistoryRule --> "1" HistoryIndex
+KnownStandRule --> "1" ExhibitionCatalog
+ExhibitionOpenRule --> "1" ExhibitionCatalog
+UniqueIdRule --> "1" EventStore
+EventTypeRule ..> EventType

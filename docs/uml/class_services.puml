@@ -1,0 +1,13 @@
+@startuml class_services
+' Рисунок 3.6 — Службы синхронизации и статистики
+!include style.iuml
+!include defs_services.iuml
+remove Main
+remove app
+class ExhibitionCatalog #E9EDF3
+class RegisteredEvent #E9EDF3
+!include rel_services.iuml
+ContentSyncService --> "1" ExhibitionCatalog
+StatisticsService --> "1" ExhibitionCatalog
+StatisticsService ..> RegisteredEvent
+@enduml

@@ -1,0 +1,16 @@
+@startuml class_catalog
+' Рисунок 3.3 — Каталог экспозиции и источники данных
+!include style.iuml
+!include defs_catalog.iuml
+!include defs_data.iuml
+class "HistoryIndex<K, T>" as HistoryIndex #E9EDF3
+class StandContent #E9EDF3
+ExhibitionCatalog *-- "2" HistoryIndex
+ExhibitionCatalog ..> ExhibitionRepository : загружается из
+CsvExhibitionRepository ..|> ExhibitionRepository
+CsvExhibitionRepository ..> CsvFile
+CsvStandInbox ..> CsvFile
+CsvStandInbox ..> StandContent
+CsvFile ..> CsvRow
+CsvRow ..> DataLoadException
+@enduml

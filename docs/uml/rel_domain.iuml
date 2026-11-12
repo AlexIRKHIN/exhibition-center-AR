@@ -1,0 +1,9 @@
+Placement ..|> Periodic
+PublicationVersion ..|> Periodic
+Placement *-- "1" Period
+PublicationVersion *-- "0..1" Period
+Placement +-- PlacementKey
+Exhibit "*" ..> "1" Exhibition : exhibitionId
+Placement "*" ..> "1" Stand : standId
+Placement "*" ..> "1" Exhibit : exhibitId
+PublicationVersion "*" ..> "1" Exhibit : exhibitId
