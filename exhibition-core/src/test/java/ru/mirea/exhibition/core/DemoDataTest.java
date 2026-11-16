@@ -30,8 +30,8 @@ import ru.mirea.exhibition.core.sync.SyncPlan;
 class DemoDataTest {
 
     @Test
-    @DisplayName("Результаты совпадают с процедурной реализацией")
-    void sameResultsAsProcedural() {
+    @DisplayName("Результаты соответствуют ожидаемым значениям общих данных")
+    void expectedResultsOnSharedData() {
         Clock clock = TestData.clockAt("2026-10-27T18:00:00");
         LocalDateTime now = LocalDateTime.now(clock);
         ExhibitionCatalog catalog = new ExhibitionCatalog(

@@ -14,6 +14,7 @@ import ru.mirea.exhibition.core.registration.InMemoryEventStore;
 import ru.mirea.exhibition.core.registration.RegisteredEvent;
 import ru.mirea.exhibition.core.registration.RegistrationResult;
 import ru.mirea.exhibition.core.registration.RejectedEvent;
+import ru.mirea.exhibition.core.registration.RejectionReason;
 
 class EventRegistrationServiceTest {
 
@@ -28,6 +29,21 @@ class EventRegistrationServiceTest {
             lines.add(e.eventId() + " " + e.reason());
         }
         return lines;
+    }
+
+    @Test
+    @DisplayName("Пустой и пробельный id отклоняются до предметных правил")
+    void blankIdsAreBadFormat() {
+        String t = "2026-10-20T10:00:00";
+        RegistrationResult r = service.register(List.of(
+                event("", "S1", 1, "OPEN", t, 30),
+                event(" \t ", "S9", 1, "SWIPE", t, 0),
+                event("valid", "S1", 1, "OPEN", t, 30)));
+        assertEquals(List.of(
+                RejectionReason.BAD_FORMAT, RejectionReason.BAD_FORMAT),
+                r.rejected().stream().map(RejectedEvent::reason).toList());
+        assertEquals(List.of("valid"),
+                store.findAll().stream().map(RegisteredEvent::id).toList());
     }
 
     @Test

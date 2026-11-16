@@ -29,6 +29,13 @@ public final class CsvRow {
         return fields.length;
     }
 
+    public void requireSize(int expected) {
+        if (fields.length != expected) {
+            throw error("ожидалось столбцов: " + expected
+                    + ", получено: " + fields.length);
+        }
+    }
+
     /** Поля строки как есть (копия массива). */
     public String[] fields() {
         return fields.clone();
@@ -61,7 +68,7 @@ public final class CsvRow {
 
     /** Дата и время; пустое поле — null (открытый период, черновик). */
     public LocalDateTime dateTimeOrNull(int index) {
-        String value = index < fields.length ? fields[index] : "";
+        String value = text(index);
         if (value.isEmpty()) {
             return null;
         }

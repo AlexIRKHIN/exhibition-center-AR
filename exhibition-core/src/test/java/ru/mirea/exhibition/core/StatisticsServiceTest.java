@@ -41,6 +41,25 @@ class StatisticsServiceTest {
     }
 
     @Test
+    @DisplayName("Сумма свыше Integer.MAX_VALUE и рейтинг не переполняются")
+    void largeTotalDuration() {
+        RegisteredEvent high = accepted(event("high", "S1", 1, "OPEN",
+                "2026-10-20T10:00:00", 3600)).get(0);
+        RegisteredEvent low = accepted(event("low", "S1", 2, "OPEN",
+                "2026-10-20T10:00:00", 1)).get(0);
+        List<RegisteredEvent> events = new ArrayList<>(1_193_048);
+        events.addAll(java.util.Collections.nCopies(596_524, high));
+        events.addAll(java.util.Collections.nCopies(596_524, low));
+        StatisticsReport report = service.report(events,
+                at("2026-10-20T12:00:00"));
+        assertEquals(List.of(1, 2), ids(report));
+        ExhibitStats first = report.ranking().get(0);
+        assertEquals(596_524L, first.count());
+        assertEquals(2_147_486_400L, first.totalSec());
+        assertEquals(3600.0, first.averageSec(), 1e-9);
+    }
+
+    @Test
     @DisplayName("Суммирование и порядок рейтинга при равенстве"
             + " показателей")
     void rankingOrder() {

@@ -9,8 +9,8 @@ package ru.mirea.exhibition.core.stats;
 public final class ExhibitStats {
 
     private final int exhibitId;
-    private int count;
-    private int totalSec;
+    private long count;
+    private long totalSec;
 
     ExhibitStats(int exhibitId) {
         this.exhibitId = exhibitId;
@@ -25,11 +25,11 @@ public final class ExhibitStats {
         return exhibitId;
     }
 
-    public int count() {
+    public long count() {
         return count;
     }
 
-    public int totalSec() {
+    public long totalSec() {
         return totalSec;
     }
 

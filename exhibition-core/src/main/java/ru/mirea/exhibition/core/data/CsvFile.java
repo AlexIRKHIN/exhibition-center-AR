@@ -45,9 +45,11 @@ public final class CsvFile {
      * объекта отверг значения (например, период с концом раньше
      * начала), ошибка дополняется номером строки.
      */
-    public static <T> List<T> read(Path file, Function<CsvRow, T> mapper) {
+    public static <T> List<T> read(Path file, int columns,
+                                   Function<CsvRow, T> mapper) {
         List<T> result = new ArrayList<>();
         for (CsvRow row : rows(file)) {
+            row.requireSize(columns);
             try {
                 result.add(mapper.apply(row));
             } catch (IllegalArgumentException | NullPointerException e) {

@@ -28,11 +28,11 @@ package "stats" {
   }
   class ExhibitStats {
     - exhibitId : int
-    - count : int
-    - totalSec : int
+    - count : long
+    - totalSec : long
     ~ add(durationSec)
-    + count() : int
-    + totalSec() : int
+    + count() : long
+    + totalSec() : long
     + averageSec() : double
   }
   class StatisticsReport <<record>> {

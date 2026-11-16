@@ -22,7 +22,8 @@ public record IncomingEvent(String id, String standId, int exhibitId,
      * @return событие или пусто, если формат нарушен
      */
     public static Optional<IncomingEvent> parse(String[] fields) {
-        if (fields.length != FIELD_COUNT) {
+        if (fields.length != FIELD_COUNT || fields[0] == null
+                || fields[0].isBlank()) {
             return Optional.empty();
         }
         try {

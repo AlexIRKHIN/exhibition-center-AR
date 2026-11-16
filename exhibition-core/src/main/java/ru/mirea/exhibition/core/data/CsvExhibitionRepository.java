@@ -28,7 +28,7 @@ public final class CsvExhibitionRepository
     @Override
     public List<Exhibition> exhibitions() {
         // id;title;opens;closes
-        return CsvFile.read(file("exhibitions.csv"),
+        return CsvFile.read(file("exhibitions.csv"), 4,
                 r -> new Exhibition(r.integer(0), r.text(1), r.date(2),
                         r.date(3)));
     }
@@ -36,14 +36,14 @@ public final class CsvExhibitionRepository
     @Override
     public List<Exhibit> exhibits() {
         // id;exhibition_id;title
-        return CsvFile.read(file("exhibits.csv"),
+        return CsvFile.read(file("exhibits.csv"), 3,
                 r -> new Exhibit(r.integer(0), r.integer(1), r.text(2)));
     }
 
     @Override
     public List<Stand> stands() {
         // id;name;hall;type
-        return CsvFile.read(file("stands.csv"),
+        return CsvFile.read(file("stands.csv"), 4,
                 r -> new Stand(r.text(0), r.text(1), r.text(2),
                         r.text(3)));
     }
@@ -51,7 +51,7 @@ public final class CsvExhibitionRepository
     @Override
     public List<PublicationVersion> versions() {
         // version_id;exhibit_id;version_no;published_from;published_to
-        return CsvFile.read(file("versions.csv"), r -> {
+        return CsvFile.read(file("versions.csv"), 5, r -> {
             LocalDateTime from = r.dateTimeOrNull(3);
             Period period = from == null
                     ? null : new Period(from, r.dateTimeOrNull(4));
@@ -64,7 +64,7 @@ public final class CsvExhibitionRepository
     public List<Placement> placements() {
         // placement_id;stand_id;exhibit_id;display_order;valid_from;
         // valid_to
-        return CsvFile.read(file("placements.csv"),
+        return CsvFile.read(file("placements.csv"), 6,
                 r -> new Placement(r.integer(0), r.text(1), r.integer(2),
                         r.integer(3), new Period(r.dateTimeOrNull(4),
                         r.dateTimeOrNull(5))));

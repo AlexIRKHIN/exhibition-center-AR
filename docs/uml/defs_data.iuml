@@ -16,12 +16,13 @@ package "data" {
   }
   class CsvFile <<utility>> {
     + {static} rows(file) : List<CsvRow>
-    + {static} read(file, mapper) : List<T>
+    + {static} read(file, columns, mapper) : List<T>
   }
   class CsvRow {
     - file : Path
     - line : int
     - fields : String[]
+    + requireSize(expected)
     + text(i) : String
     + integer(i) : int
     + date(i) : LocalDate

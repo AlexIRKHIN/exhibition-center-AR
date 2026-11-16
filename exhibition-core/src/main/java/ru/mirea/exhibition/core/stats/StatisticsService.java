@@ -23,7 +23,7 @@ public final class StatisticsService {
      * по убыванию среднего времени, затем по возрастанию id.
      */
     public static final Comparator<ExhibitStats> BY_POPULARITY =
-            Comparator.comparingInt(ExhibitStats::count).reversed()
+            Comparator.comparingLong(ExhibitStats::count).reversed()
                     .thenComparing(Comparator
                             .comparingDouble(ExhibitStats::averageSec)
                             .reversed())

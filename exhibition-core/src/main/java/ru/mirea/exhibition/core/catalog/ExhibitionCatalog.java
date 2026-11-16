@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Collection;
+import java.util.function.Function;
 
 import ru.mirea.exhibition.core.data.ExhibitionRepository;
 import ru.mirea.exhibition.core.domain.Exhibit;
@@ -36,19 +38,54 @@ public final class ExhibitionCatalog {
             publicationHistory;
 
     public ExhibitionCatalog(ExhibitionRepository repository) {
-        repository.exhibitions().forEach(e -> exhibitions.put(e.id(), e));
-        repository.exhibits().forEach(e -> exhibits.put(e.id(), e));
-        repository.stands().forEach(s -> stands.put(s.id(), s));
+        exhibitions.putAll(uniqueById(repository.exhibitions(),
+                Exhibition::id, "Выставка"));
+        exhibits.putAll(uniqueById(repository.exhibits(), Exhibit::id, "Экспонат"));
+        stands.putAll(uniqueById(repository.stands(), Stand::id, "Стенд"));
         placements = List.copyOf(repository.placements());
+        uniqueById(placements, Placement::id, "Размещение");
+        List<PublicationVersion> versions = List.copyOf(repository.versions());
+        uniqueById(versions, PublicationVersion::id, "Версия");
+        for (Exhibit e : exhibits.values()) {
+            requireReference(exhibitions, e.exhibitionId(),
+                    "Экспонат " + e.id(), "выставка");
+        }
+        for (Placement p : placements) {
+            requireReference(stands, p.standId(), "Размещение " + p.id(), "стенд");
+            requireReference(exhibits, p.exhibitId(), "Размещение " + p.id(), "экспонат");
+        }
+        for (PublicationVersion v : versions) {
+            requireReference(exhibits, v.exhibitId(), "Версия " + v.id(), "экспонат");
+        }
         placementHistory = new HistoryIndex<>(placements, Placement::key);
         List<PublicationVersion> published = new ArrayList<>();
-        for (PublicationVersion v : repository.versions()) {
+        for (PublicationVersion v : versions) {
             if (!v.isDraft()) {
                 published.add(v);   // черновик посетители не видят
             }
         }
         publicationHistory = new HistoryIndex<>(published,
                 PublicationVersion::exhibitId);
+    }
+
+    private static <K, T> Map<K, T> uniqueById(Collection<T> records,
+                                               Function<T, K> idOf, String entity) {
+        Map<K, T> result = new HashMap<>();
+        for (T record : records) {
+            K id = idOf.apply(record);
+            if (result.putIfAbsent(id, record) != null) {
+                throw new IllegalArgumentException(entity + ": повторный id=" + id);
+            }
+        }
+        return result;
+    }
+
+    private static <K> void requireReference(Map<K, ?> records, K id,
+                                              String source, String target) {
+        if (!records.containsKey(id)) {
+            throw new IllegalArgumentException(source + ": отсутствует "
+                    + target + " id=" + id);
+        }
     }
 
     public boolean hasStand(String standId) {
